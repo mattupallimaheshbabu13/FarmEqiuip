@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Farmer Assistant | FarmEquip</title>
+  <meta name="description" content="Intelligent agricultural machinery advisory for Indian farmers. Get instant equipment recommendations, acreage cost calculations, and operator guidance.">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <style>
+    .assistant-container {
+      max-width: 900px;
+      margin: var(--space-8) auto var(--space-16);
+      background: var(--color-white);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--color-grey-light);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 75vh;
+    }
+    .assistant-header {
+      background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-primary) 100%);
+      color: white;
+      padding: var(--space-5) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: var(--space-6);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      background-color: var(--color-warm-cream);
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-xl);
+      font-size: var(--text-sm);
+      line-height: 1.5;
+    }
+    .chat-bubble.bot {
+      align-self: flex-start;
+      background: var(--color-white);
+      color: var(--color-charcoal);
+      border: 1px solid var(--color-grey-light);
+      border-bottom-left-radius: var(--radius-xs);
+    }
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-bottom-right-radius: var(--radius-xs);
+    }
+    .chat-bubble .recommend-card {
+      margin-top: var(--space-3);
+      padding: var(--space-3);
+      background: var(--color-light-green);
+      border-radius: var(--radius-md);
+      border: 1px solid #cce2c9;
+    }
+    .prompt-pills-bar {
+      padding: var(--space-3) var(--space-6);
+      background: var(--color-white);
+      border-top: 1px solid var(--color-grey-lighter);
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .prompt-pill {
+      font-size: var(--text-xs);
+      background: var(--color-warm-cream);
+      border: 1px solid var(--color-grey-light);
+      border-radius: var(--radius-full);
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      color: var(--color-forest);
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+    .prompt-pill:hover {
+      background: var(--color-light-green);
+      border-color: var(--color-primary);
+    }
+    .chat-input-bar {
+      padding: var(--space-4) var(--space-6);
+      background: var(--color-white);
+      border-top: 1px solid var(--color-grey-light);
+      display: flex;
+      gap: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link">How It Works</a>
+        <a href="/pages/assistant.html" class="nav-link active">AI Assistant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు</button>
+          </div>
+        </div>
+        <div id="navAuthActions"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="assistant-container">
+      <!-- HEADER -->
+      <div class="assistant-header">
+        <div style="display:flex; align-items:center; gap:var(--space-3);">
+          <div style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:1.25rem;">
+            🤖
+          </div>
+          <div>
+            <h2 style="color:white; font-size:var(--text-lg); margin:0;">FarmEquip AI Advisory</h2>
+            <p style="color:rgba(255,255,255,0.85); font-size:var(--text-xs); margin:0;">Trained on Indian crop cycles, machinery sizing, and real rental rates</p>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <span class="badge badge-demo" id="aiModeBadge">Demo Rule-Engine Mode</span>
+        </div>
+      </div>
+
+      <!-- CHAT MESSAGE LOG -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-bubble bot">
+          <p><strong>Namaskaram / Hello Farmer! 🙏</strong></p>
+          <p style="margin-top:4px;">
+            I am your FarmEquip agricultural machinery assistant. Tell me your <strong>crop, acreage, and farm activity</strong> (e.g., land preparation, spraying, weeding, harvesting), and I will calculate equipment rates, operator recommendations, and safety tips for you!
+          </p>
+        </div>
+      </div>
+
+      <!-- SUGGESTED QUESTIONS PILLS -->
+      <div class="prompt-pills-bar">
+        <button class="prompt-pill" onclick="sendQuickPrompt('I have 3 acres of paddy and need to spray my crop. What equipment should I rent?')">
+          🌾 3 acres paddy spraying
+        </button>
+        <button class="prompt-pill" onclick="sendQuickPrompt('Need a 45HP tractor with rotavator for 5 acres cotton field in Guntur')">
+          🚜 5 acres cotton field prep
+        </button>
+        <button class="prompt-pill" onclick="sendQuickPrompt('What is the cost of renting a combine harvester for paddy per acre?')">
+          🌾 Combine harvester cost
+        </button>
+        <button class="prompt-pill" onclick="sendQuickPrompt('వరి పొలంలో మందులు పిచికారీ చేయడానికి ఏ పరికరం మంచిది? (Telugu)')">
+          🇮🇳 తెలుగులో సలహా (Paddy spray)
+        </button>
+      </div>
+
+      <!-- INPUT BAR -->
+      <form class="chat-input-bar" onsubmit="handleChatSubmit(event)">
+        <input type="text" id="chatInput" class="form-control" placeholder="Ask in English or Telugu (e.g. 'I have 3 acres of paddy to spray...')" required autocomplete="off">
+        <button type="submit" class="btn btn-primary" id="chatSendBtn" style="padding:0 1.5rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/assistant.js"></script>
+</body>
+</html>

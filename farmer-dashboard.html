@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard | FarmEquip</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          <path d="M14 5l3 3l-3 3"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link">How It Works</a>
+        <a href="/pages/assistant.html" class="nav-link">AI Assistant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు (Telugu)</button>
+          </div>
+        </div>
+
+        <button class="btn btn-icon btn-secondary" id="notifBellBtn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+
+        <div id="navAuthActions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Notifications</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Dashboard Shell -->
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-profile">
+        <div class="profile-avatar" id="farmerAvatar">VR</div>
+        <div class="profile-info">
+          <div class="profile-name" id="farmerDisplayName">Venkat Rao</div>
+          <div class="profile-role">Registered Farmer</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" onclick="switchFarmerTab('overview', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Overview</span>
+        </a>
+        <a class="sidebar-link" onclick="switchFarmerTab('bookings', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>My Bookings</span>
+        </a>
+        <a class="sidebar-link" onclick="switchFarmerTab('active', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Active Rentals</span>
+        </a>
+        <a class="sidebar-link" onclick="switchFarmerTab('payments', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Payments & Deposits</span>
+        </a>
+        <a class="sidebar-link" href="/pages/marketplace.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Find Equipment</span>
+        </a>
+        <a class="sidebar-link" href="/pages/assistant.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.11L3 22l1.11-4.413A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/></svg>
+          <span>AI Advisory</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width:100%; color:var(--color-danger);" onclick="window.auth.logout()">
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- DASHBOARD CONTENT AREA -->
+    <main class="dashboard-content">
+
+      <!-- TOP METRIC CARDS -->
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Farmer Portal</h1>
+          <p class="dashboard-subtitle">Manage reservations, verify handovers, and track security deposits.</p>
+        </div>
+        <a href="/pages/marketplace.html" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Book New Machinery</span>
+        </a>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">🚜</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statActiveRentals">1</span>
+            <span class="stat-name">Active Rentals</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">📅</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statUpcomingBookings">2</span>
+            <span class="stat-name">Upcoming Bookings</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">✅</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statCompletedRentals">5</span>
+            <span class="stat-name">Completed Rentals</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">₹</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statTotalExpenditure">₹14,500</span>
+            <span class="stat-name">Total Expenditure</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: OVERVIEW & ACTIVE RENTALS -->
+      <section id="tab-overview">
+        <div class="card" style="margin-bottom:var(--space-8);">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Current Rental In Progress</h3>
+            <span class="badge badge-success">ACTIVE IN FIELD</span>
+          </div>
+          <div class="card-body">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--space-4);">
+              <div>
+                <h4 style="font-size:var(--text-xl); color:var(--color-forest);">DJI Agras T40 Agricultural Drone</h4>
+                <p style="font-size:var(--text-sm); color:var(--color-grey);">Provider: Ramesh Agri-Services • Operator: K. Suresh (Certified Pilot)</p>
+                <div style="margin-top:var(--space-3); font-size:var(--text-sm);">
+                  <span>📅 Rental Period: <strong>14 Oct 2026 - 15 Oct 2026</strong></span> • 
+                  <span>🛡️ Escrow Deposit: <strong>₹2,000 (Protected)</strong></span>
+                </div>
+              </div>
+
+              <div>
+                <button class="btn btn-forest" onclick="openReturnModal(1)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                  <span>Request Return & Release Deposit</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Stepper showing workflow state -->
+            <div class="stepper" style="margin-top:var(--space-8);">
+              <div class="step-item completed">
+                <div class="step-dot">✓</div>
+                <div class="step-label">Requested</div>
+              </div>
+              <div class="step-item completed">
+                <div class="step-dot">✓</div>
+                <div class="step-label">Confirmed</div>
+              </div>
+              <div class="step-item completed">
+                <div class="step-dot">✓</div>
+                <div class="step-label">Handed Over</div>
+              </div>
+              <div class="step-item active">
+                <div class="step-dot">4</div>
+                <div class="step-label">Active Rental</div>
+              </div>
+              <div class="step-item">
+                <div class="step-dot">5</div>
+                <div class="step-label">Return Request</div>
+              </div>
+              <div class="step-item">
+                <div class="step-dot">6</div>
+                <div class="step-label">Deposit Refund</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: ALL BOOKINGS TABLE -->
+      <section id="tab-bookings">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">All Booking Reservations</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Equipment</th>
+                  <th>Dates</th>
+                  <th>Operator</th>
+                  <th>Total Cost</th>
+                  <th>Deposit Status</th>
+                  <th>Workflow Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="farmerBookingsTableBody">
+                <!-- Injected dynamically via farmer-dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: PAYMENTS & DEPOSITS -->
+      <section id="tab-payments" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Payment & Security Deposit Log</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Txn ID</th>
+                  <th>Description</th>
+                  <th>Rental Fee</th>
+                  <th>Deposit (Escrow)</th>
+                  <th>Deposit Refund Status</th>
+                  <th>Method</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="farmerPaymentsTableBody">
+                <tr>
+                  <td><code>TXN-88421</code></td>
+                  <td>DJI Agras T40 Drone (3 Acres)</td>
+                  <td>₹1,900</td>
+                  <td>₹2,000</td>
+                  <td><span class="badge badge-warning">Held in Escrow</span></td>
+                  <td>UPI (PhonePe)</td>
+                  <td>13 Oct 2026</td>
+                </tr>
+                <tr>
+                  <td><code>TXN-76129</code></td>
+                  <td>Mahindra 575 DI Tractor (2 Days)</td>
+                  <td>₹5,600</td>
+                  <td>₹3,000</td>
+                  <td><span class="badge badge-success">Refunded (₹3,000)</span></td>
+                  <td>UPI (GPay)</td>
+                  <td>28 Sep 2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- EQUIPMENT RETURN & INSPECTION MODAL -->
+  <div class="modal-backdrop" id="returnInspectionModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Equipment Return & Condition Inspection</h3>
+        <button class="modal-close" onclick="closeReturnModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:var(--text-sm); color:var(--color-grey); margin-bottom:var(--space-4);">
+          Complete this digital return inspection checklist with the equipment provider. Once verified, your refundable security deposit will be transferred back to your UPI account.
+        </p>
+
+        <!-- Condition Checklist -->
+        <h4 style="font-size:var(--text-sm); color:var(--color-forest); font-weight:700;">Joint Inspection Checklist:</h4>
+        <div class="checklist-group">
+          <label class="checklist-item">
+            <input type="checkbox" id="checkClean" checked>
+            <span>Machinery is washed, cleaned of field mud and excessive crop debris.</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" id="checkDamage" checked>
+            <span>No visible structural damage, crack, or bent blades/rotors during field work.</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" id="checkFuel" checked>
+            <span>Fuel tank/battery charge returned to agreed handover level.</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" id="checkAccessories" checked>
+            <span>All accessories (sprayer nozzles, remote controller, charger, PTO shaft) returned intact.</span>
+          </label>
+        </div>
+
+        <!-- Condition Notes -->
+        <div class="form-group">
+          <label class="form-label" for="returnNotes">Return Notes / Observations</label>
+          <textarea id="returnNotes" class="form-control" rows="2" placeholder="e.g. Completed 3 acres of paddy spraying. Machine functioned perfectly with zero anomalies."></textarea>
+        </div>
+
+        <!-- Simulated Photo Inspection Upload -->
+        <div class="form-group">
+          <label class="form-label">Machinery Condition Photos (At Return)</label>
+          <div class="photo-upload-zone" onclick="simulatePhotoUpload()">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto var(--space-2); color:var(--color-primary);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div style="font-size:var(--text-sm); font-weight:600; color:var(--color-forest);">Click to capture or upload return photos</div>
+            <div style="font-size:var(--text-xs); color:var(--color-grey);">Rotor/Blade view, Odometer/Hour meter, Overall unit</div>
+          </div>
+          <div class="photo-preview-grid" id="returnPhotoPreviews">
+            <img class="photo-preview-thumb" src="https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=200&q=80" alt="Inspection Photo 1">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeReturnModal()">Cancel</button>
+        <button class="btn btn-forest" id="submitReturnInspectionBtn" onclick="submitReturnInspection()">
+          Sign-Off & Request Deposit Release
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/farmer-dashboard.js"></script>
+</body>
+</html>

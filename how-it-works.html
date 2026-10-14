@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How FarmEquip Works | Step-by-Step Rental Guide</title>
+  <meta name="description" content="Learn how FarmEquip connects Indian farmers with equipment owners. Complete guide to discovery, booking, handover photo inspection, and return with escrow deposit protection.">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link active">How It Works</a>
+        <a href="/pages/register.html?role=equipment_owner" class="nav-link">For Equipment Owners</a>
+        <a href="/pages/assistant.html" class="nav-link">AI Assistant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు</button>
+          </div>
+        </div>
+        <div id="navAuthActions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <div style="background-color: var(--color-forest); color: white; padding: var(--space-12) 0; text-align: center;">
+    <div class="container" style="max-width: 760px;">
+      <h1 style="color:white; font-size: 2.5rem; margin-bottom: var(--space-3);">How FarmEquip Works</h1>
+      <p style="opacity: 0.9; font-size: var(--text-lg);">A transparent, dispute-free rental workflow built around the needs of Indian farming communities.</p>
+    </div>
+  </div>
+
+  <!-- Step by step visual process -->
+  <main class="section">
+    <div class="container" style="max-width: 900px;">
+      
+      <div style="display:flex; flex-direction:column; gap:var(--space-8);">
+
+        <!-- Step 1 -->
+        <div class="card" style="padding:var(--space-8); display:flex; gap:var(--space-6); align-items:flex-start;">
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--color-forest); color:white; font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            1
+          </div>
+          <div>
+            <span class="badge badge-forest" style="margin-bottom:var(--space-2);">DISCOVER & COMPARE</span>
+            <h3 style="font-size:var(--text-xl); color:var(--color-forest); margin-bottom:var(--space-2);">Find the Right Machinery Near Your Village</h3>
+            <p style="color:var(--color-charcoal); line-height:1.6; font-size:var(--text-sm);">
+              Enter your village name, mandal, or PIN code to view active tractors, harvesters, seeders, or spraying drones located within your radius. Filter by horsepower, billing rate (per acre, per hour, or per day), and operator availability.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card" style="padding:var(--space-8); display:flex; gap:var(--space-6); align-items:flex-start;">
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--color-forest); color:white; font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            2
+          </div>
+          <div>
+            <span class="badge badge-warning" style="margin-bottom:var(--space-2);">BOOK & ESCROW HOLD</span>
+            <h3 style="font-size:var(--text-xl); color:var(--color-forest); margin-bottom:var(--space-2);">Reserve with Protected Security Deposit</h3>
+            <p style="color:var(--color-charcoal); line-height:1.6; font-size:var(--text-sm);">
+              Select your required dates and whether you need delivery or a trained operator. Our automated scheduling calendar prevents double-bookings. Pay the rental fee and a nominal refundable deposit via secure UPI or net banking. Funds remain safely in escrow until work is completed.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card" style="padding:var(--space-8); display:flex; gap:var(--space-6); align-items:flex-start;">
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--color-forest); color:white; font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            3
+          </div>
+          <div>
+            <span class="badge badge-info" style="margin-bottom:var(--space-2);">HANDOVER INSPECTION</span>
+            <h3 style="font-size:var(--text-xl); color:var(--color-forest); margin-bottom:var(--space-2);">Digital Photographic Handover</h3>
+            <p style="color:var(--color-charcoal); line-height:1.6; font-size:var(--text-sm);">
+              When machinery arrives at your field, the farmer and provider complete a 2-minute mobile photo inspection checklist. Hour meters, fuel level, and condition are logged to eliminate disputes before field work begins.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card" style="padding:var(--space-8); display:flex; gap:var(--space-6); align-items:flex-start;">
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--color-forest); color:white; font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            4
+          </div>
+          <div>
+            <span class="badge badge-success" style="margin-bottom:var(--space-2);">RETURN & INSTANT REFUND</span>
+            <h3 style="font-size:var(--text-xl); color:var(--color-forest); margin-bottom:var(--space-2);">Return Machinery & Receive Deposit Refund</h3>
+            <p style="color:var(--color-charcoal); line-height:1.6; font-size:var(--text-sm);">
+              Once your plowing, spraying, or harvesting is completed, mark the equipment for return. Both parties confirm condition, and the security deposit is credited back into your UPI account immediately.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center; margin-top:var(--space-12);">
+        <a href="/pages/marketplace.html" class="btn btn-primary btn-lg">Explore Available Equipment</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+</body>
+</html>

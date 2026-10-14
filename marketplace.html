@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment Marketplace | FarmEquip</title>
+  <meta name="description" content="Discover, compare, and rent agricultural machinery across India. Filter by category, location, and operator availability.">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <style>
+    .marketplace-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--space-8);
+      margin: var(--space-8) 0 var(--space-16);
+      align-items: start;
+    }
+    .filter-panel {
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-grey-light);
+      padding: var(--space-6);
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-4));
+    }
+    .filter-section {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-grey-lighter);
+    }
+    .filter-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .filter-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-forest);
+      margin-bottom: var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .filter-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .filter-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--color-charcoal);
+      cursor: pointer;
+    }
+    .market-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      background: var(--color-white);
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-grey-light);
+    }
+    @media (max-width: 900px) {
+      .marketplace-layout {
+        grid-template-columns: 1fr;
+      }
+      .filter-panel {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          <path d="M14 5l3 3l-3 3"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link" data-i18n="nav_home">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link active" data-i18n="nav_explore">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link" data-i18n="nav_how_it_works">How It Works</a>
+        <a href="/pages/register.html?role=equipment_owner" class="nav-link" data-i18n="nav_for_owners">For Equipment Owners</a>
+        <a href="/pages/assistant.html" class="nav-link">AI Assistant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు (Telugu)</button>
+          </div>
+        </div>
+
+        <!-- Notification Bell -->
+        <button class="btn btn-icon btn-secondary" id="notifBellBtn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+
+        <div id="navAuthActions">
+          <a href="/pages/login.html" class="btn btn-outline btn-sm" data-i18n="nav_login">Login</a>
+          <a href="/pages/register.html" class="btn btn-forest btn-sm" data-i18n="nav_register">Register</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Notifications</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Marketplace Header Banner -->
+  <div style="background-color: var(--color-forest); color: white; padding: var(--space-10) 0;">
+    <div class="container">
+      <h1 style="color:white; font-size: 2.25rem; margin-bottom: var(--space-2);">Agricultural Equipment Catalogue</h1>
+      <p style="opacity:0.9; font-size: var(--text-base);">Rent verified tractors, drones, harvesters, and implements across Andhra Pradesh & Telangana.</p>
+    </div>
+  </div>
+
+  <!-- Marketplace Main Container -->
+  <div class="container">
+    <div class="marketplace-layout">
+
+      <!-- LEFT SIDEBAR: FILTERS -->
+      <aside class="filter-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-5);">
+          <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Filters</h3>
+          <button id="resetFiltersBtn" class="btn btn-sm btn-secondary" style="font-size:0.75rem;">Reset All</button>
+        </div>
+
+        <!-- Search Keyword -->
+        <div class="filter-section">
+          <div class="filter-title">Search Machinery</div>
+          <input type="text" id="filterKeyword" class="form-control" placeholder="Tractor, Drone, Harvester...">
+        </div>
+
+        <!-- Location Filter -->
+        <div class="filter-section">
+          <div class="filter-title">Location / PIN</div>
+          <input type="text" id="filterLocation" class="form-control" placeholder="Village, District or PIN">
+        </div>
+
+        <!-- Category Checkboxes -->
+        <div class="filter-section">
+          <div class="filter-title">Category</div>
+          <div class="filter-checkbox-list" id="categoryCheckboxes">
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="drones"> Agricultural Drones
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="tractors"> Tractors & Implements
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="harvesters"> Combine Harvesters
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="seeders"> Seed Drills & Planters
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="tillers"> Power Tillers
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="sprayers"> Boom Sprayers
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="pumps"> Irrigation Pumps
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" name="cat" value="threshers"> Threshers
+            </label>
+          </div>
+        </div>
+
+        <!-- Operator Preference -->
+        <div class="filter-section">
+          <div class="filter-title">Operator Requirement</div>
+          <div class="filter-checkbox-list">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="operatorReq" value="all" checked> Any
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="operatorReq" value="included"> Operator Included / Available
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="operatorReq" value="self"> Self-Operated Only
+            </label>
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>Max Price (₹ / day)</span>
+            <span id="priceDisplay" style="color:var(--color-primary); font-weight:700;">₹15,000</span>
+          </div>
+          <input type="range" id="priceRange" min="500" max="25000" step="500" value="15000" style="width:100%; accent-color:var(--color-primary);">
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: RESULTS & CARDS -->
+      <main>
+        <div class="market-top-bar">
+          <div>
+            <span style="font-weight:700; color:var(--color-forest); font-size:var(--text-lg);" id="resultsCount">Loading equipment...</span>
+            <span style="font-size:var(--text-xs); color:var(--color-grey); display:block;">Verified local machinery</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:var(--space-3);">
+            <label for="sortOrder" style="font-size:var(--text-xs); font-weight:700; color:var(--color-grey); text-transform:uppercase;">Sort By:</label>
+            <select id="sortOrder" class="form-select" style="width:auto; padding:0.4rem 0.8rem; font-size:var(--text-xs);">
+              <option value="featured">Featured / Recommended</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Equipment Grid -->
+        <div class="equipment-grid" id="marketplaceGrid">
+          <!-- Dynamically populated via marketplace.js -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="noResultsState" style="display:none; text-align:center; padding:var(--space-16) var(--space-4); background:white; border-radius:var(--radius-xl); border:1px solid var(--color-grey-light);">
+          <div style="font-size:3rem; margin-bottom:var(--space-4);">🌾</div>
+          <h3 style="color:var(--color-forest); font-size:var(--text-xl); margin-bottom:var(--space-2);">No equipment matched your filters</h3>
+          <p style="color:var(--color-grey); max-width:400px; margin:0 auto var(--space-6);">Try widening your search radius, selecting a different category, or resetting the filters.</p>
+          <button class="btn btn-primary" onclick="resetAllFilters()">Reset Filters</button>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/marketplace.js"></script>
+</body>
+</html>

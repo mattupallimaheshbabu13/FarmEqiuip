@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | FarmEquip</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+        <span class="badge badge-forest" style="margin-left:8px; font-size:10px;">ADMIN PORTAL</span>
+      </a>
+
+      <div class="nav-actions">
+        <div id="navAuthActions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Platform Alerts</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Dashboard Shell -->
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-profile">
+        <div class="profile-avatar" style="background-color:var(--color-forest-dark);">AD</div>
+        <div class="profile-info">
+          <div class="profile-name">Platform Supervisor</div>
+          <div class="profile-role"><span class="badge badge-forest">Super Admin</span></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" onclick="switchAdminTab('overview', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Platform Overview</span>
+        </a>
+        <a class="sidebar-link" onclick="switchAdminTab('verifications', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+          <span>Provider KYC</span>
+          <span class="badge badge-warning" id="kycPendingBadge" style="margin-left:auto;">2</span>
+        </a>
+        <a class="sidebar-link" onclick="switchAdminTab('moderation', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Listings Moderation</span>
+        </a>
+        <a class="sidebar-link" onclick="switchAdminTab('bookings', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>All Bookings & Escrow</span>
+        </a>
+        <a class="sidebar-link" onclick="switchAdminTab('users', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>User Directory</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width:100%; color:var(--color-danger);" onclick="window.auth.logout()">
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="dashboard-content">
+
+      <!-- HEADER -->
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Platform Administration</h1>
+          <p class="dashboard-subtitle">Platform-wide governance, KYC verification, dispute mediation, and escrow tracking.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <span class="badge badge-verified">PostgreSQL Connected</span>
+          <span class="badge badge-success">Escrow Engine Active</span>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">👥</div>
+          <div class="stat-info">
+            <span class="stat-val" id="adminTotalUsers">1,248</span>
+            <span class="stat-name">Registered Users</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">🛡️</div>
+          <div class="stat-info">
+            <span class="stat-val" id="adminPendingKYC">2</span>
+            <span class="stat-name">Pending KYC Approvals</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">🚜</div>
+          <div class="stat-info">
+            <span class="stat-val" id="adminActiveRentals">18</span>
+            <span class="stat-name">Active In-Field Rentals</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">₹</div>
+          <div class="stat-info">
+            <span class="stat-val" id="adminEscrowHeld">₹1,85,000</span>
+            <span class="stat-name">Total Escrow Deposits</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: KYC PROVIDER VERIFICATION -->
+      <section id="admin-tab-verifications">
+        <div class="card" style="margin-bottom:var(--space-8);">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Equipment Provider Verification Queue</h3>
+            <span class="badge badge-warning">2 Action Required</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Provider / Farm</th>
+                  <th>Location</th>
+                  <th>Machinery Proof</th>
+                  <th>Aadhaar / PAN</th>
+                  <th>Submitted</th>
+                  <th>KYC Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminKYCTableBody">
+                <tr id="kyc-row-1">
+                  <td>
+                    <strong>Sri Balaji Agro Services</strong>
+                    <div style="font-size:0.75rem; color:var(--color-grey);">Proprietor: B. Srinivas • 9848011223</div>
+                  </td>
+                  <td>Nalgonda, Telangana</td>
+                  <td><a href="#" style="font-size:0.8rem; text-decoration:underline;">Tractor RC (TS05-AB-1294)</a></td>
+                  <td><span class="badge badge-forest">Aadhaar Verified</span></td>
+                  <td style="font-size:0.8rem;">12 Oct 2026</td>
+                  <td>
+                    <div class="actions">
+                      <button class="btn btn-primary btn-sm" onclick="approveKYC(1)">Approve KYC</button>
+                      <button class="btn btn-secondary btn-sm" onclick="rejectKYC(1)">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr id="kyc-row-2">
+                  <td>
+                    <strong>Kisan Drone Solutions</strong>
+                    <div style="font-size:0.75rem; color:var(--color-grey);">Pilot: M. Pradeep • 9440192834</div>
+                  </td>
+                  <td>Krishna, Andhra Pradesh</td>
+                  <td><a href="#" style="font-size:0.8rem; text-decoration:underline;">DGCA Drone Pilot Remote Certificate</a></td>
+                  <td><span class="badge badge-forest">PAN Verified</span></td>
+                  <td style="font-size:0.8rem;">13 Oct 2026</td>
+                  <td>
+                    <div class="actions">
+                      <button class="btn btn-primary btn-sm" onclick="approveKYC(2)">Approve KYC</button>
+                      <button class="btn btn-secondary btn-sm" onclick="rejectKYC(2)">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: ALL BOOKINGS & ESCROW OVERVIEW -->
+      <section id="admin-tab-bookings">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Platform Bookings & Escrow Deposit Supervision</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Booking</th>
+                  <th>Farmer</th>
+                  <th>Provider</th>
+                  <th>Equipment</th>
+                  <th>Rental Total</th>
+                  <th>Escrow Deposit</th>
+                  <th>State Machine Status</th>
+                  <th>Audit Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>#BK-101</code></td>
+                  <td>Venkat Rao (Warangal)</td>
+                  <td>Ramesh Agri-Services</td>
+                  <td>DJI Agras T40 Drone</td>
+                  <td>₹3,900</td>
+                  <td><span class="badge badge-warning">₹2,000 In Escrow</span></td>
+                  <td><span class="badge badge-success">RENTED</span></td>
+                  <td><button class="btn btn-secondary btn-sm" onclick="alert('Audit logs: Handover photos verified. Telematics GPS ping active.')">Audit Log</button></td>
+                </tr>
+                <tr>
+                  <td><code>#BK-102</code></td>
+                  <td>G. Srinivasa Rao</td>
+                  <td>Ramesh Agri-Services</td>
+                  <td>Mahindra 575 DI Tractor</td>
+                  <td>₹8,950</td>
+                  <td><span class="badge badge-info">₹3,000 Authorized</span></td>
+                  <td><span class="badge badge-info">CONFIRMED</span></td>
+                  <td><button class="btn btn-secondary btn-sm" onclick="alert('Booking confirmed. Handover window scheduled for 20 Oct 2026.')">Audit Log</button></td>
+                </tr>
+                <tr>
+                  <td><code>#BK-95</code></td>
+                  <td>K. Rama Krishna</td>
+                  <td>National Agro Implements</td>
+                  <td>Laser Land Leveler</td>
+                  <td>₹7,400</td>
+                  <td><span class="badge badge-success">₹3,500 Refunded</span></td>
+                  <td><span class="badge badge-forest">COMPLETED</span></td>
+                  <td><button class="btn btn-secondary btn-sm" onclick="alert('Inspection sign-off confirmed by both parties. Deposit refunded.')">Audit Log</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Admin session mock check
+      if (!window.auth.isAuthenticated() || !window.auth.hasRole('admin')) {
+        const demoAdmin = {
+          id: 99,
+          full_name: "Antigravity Admin Officer",
+          role: "admin",
+          email: "admin@farmequip.in"
+        };
+        window.auth.setUser(demoAdmin, 'mock-admin-token');
+      }
+    });
+
+    function switchAdminTab(tab, el) {
+      document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      const vTab = document.getElementById('admin-tab-verifications');
+      const bTab = document.getElementById('admin-tab-bookings');
+
+      if (tab === 'overview') {
+        vTab.style.display = 'block';
+        bTab.style.display = 'block';
+      } else if (tab === 'verifications') {
+        vTab.style.display = 'block';
+        bTab.style.display = 'none';
+      } else if (tab === 'bookings') {
+        vTab.style.display = 'none';
+        bTab.style.display = 'block';
+      } else {
+        vTab.style.display = 'block';
+        bTab.style.display = 'block';
+      }
+    }
+
+    async function approveKYC(id) {
+      try {
+        if (window.api) await window.api.post(`/admin/providers/${id}/verify`);
+      } catch (e) {}
+
+      const row = document.getElementById(`kyc-row-${id}`);
+      if (row) {
+        row.style.background = '#eaf4e8';
+        row.innerHTML = `<td colspan="6" style="padding:1rem; color:var(--color-forest); font-weight:700;">✓ Provider Verified & Activated on Live Marketplace</td>`;
+      }
+      if (window.notify) window.notify.showToast('Provider KYC Approved! Verified badge enabled.', 'success');
+      
+      const badge = document.getElementById('kycPendingBadge');
+      if (badge) badge.textContent = '1';
+    }
+
+    async function rejectKYC(id) {
+      if (!confirm('Reject KYC application?')) return;
+      const row = document.getElementById(`kyc-row-${id}`);
+      if (row) row.remove();
+      if (window.notify) window.notify.showToast('Provider KYC application rejected.', 'info');
+    }
+  </script>
+</body>
+</html>

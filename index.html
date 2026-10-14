@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FarmEquip | Modern Farming Equipment Rental Marketplace</title>
+  <meta name="description" content="India's leading agricultural equipment rental platform. Rent tractors, combine harvesters, agricultural drones, and seed drills directly from verified local providers with optional operators.">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+  <!-- =========================================================================
+       NAVIGATION BAR
+       ========================================================================= -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo" id="logoLink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          <path d="M14 5l3 3l-3 3"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link active" data-i18n="nav_home">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link" data-i18n="nav_explore">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link" data-i18n="nav_how_it_works">How It Works</a>
+        <a href="/pages/register.html?role=equipment_owner" class="nav-link" data-i18n="nav_for_owners">For Equipment Owners</a>
+        <a href="/pages/assistant.html" class="nav-link">AI Assistant</a>
+      </nav>
+
+      <!-- Language Selector & User Auth State -->
+      <div class="nav-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn" aria-label="Change Language">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు (Telugu)</button>
+          </div>
+        </div>
+
+        <!-- In-App Notification Bell -->
+        <button class="btn btn-icon btn-secondary" id="notifBellBtn" title="Notifications" style="position:relative;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="notifUnreadBadge" style="position:absolute; top:-2px; right:-2px; background:var(--color-danger); color:white; font-size:10px; font-weight:700; width:16px; height:16px; border-radius:50%; display:none; align-items:center; justify-content:center;">2</span>
+        </button>
+
+        <!-- Dynamic Auth Buttons (Login/Register or User Badge) -->
+        <div id="navAuthActions" style="display:flex; align-items:center; gap:0.5rem;">
+          <a href="/pages/login.html" class="btn btn-outline btn-sm" data-i18n="nav_login">Login</a>
+          <a href="/pages/register.html" class="btn btn-forest btn-sm" data-i18n="nav_register">Register</a>
+          <a href="/pages/marketplace.html" class="btn btn-primary btn-sm" data-i18n="nav_rent_cta">Rent Equipment</a>
+        </div>
+
+        <!-- Mobile Nav Toggle -->
+        <button class="mobile-nav-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Notifications</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList">
+      <!-- Injected via JavaScript -->
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       HERO SECTION
+       ========================================================================= -->
+  <section class="hero-section">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+      <div class="hero-pill" data-i18n="hero_badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        India's Trusted Agri-Rental Platform
+      </div>
+      <h1 class="hero-title" data-i18n="tagline">Modern Farming Equipment. When You Need It.</h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        Rent the right agricultural machinery for your farm. Compare prices, find nearby providers, and pay for the equipment only when you need it.
+      </p>
+      <div class="hero-actions">
+        <a href="/pages/marketplace.html" class="btn btn-primary btn-lg" data-i18n="btn_find_equipment" id="heroFindEquipBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Find Equipment
+        </a>
+        <a href="/pages/register.html?role=equipment_owner" class="btn btn-outline-white btn-lg" data-i18n="btn_list_equipment">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          List Your Equipment
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       EQUIPMENT SEARCH WIDGET
+       ========================================================================= -->
+  <div class="container">
+    <div class="search-widget-card">
+      <form id="heroSearchForm" class="search-grid" onsubmit="handleSearchSubmit(event)">
+        <!-- Location / PIN -->
+        <div class="search-field">
+          <label for="searchLocation" data-i18n="search_location_label">Location, Village or PIN</label>
+          <div class="input-wrapper">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input type="text" id="searchLocation" class="form-control" placeholder="e.g. Warangal, Guntur, 506001" data-i18n-placeholder="search_location_placeholder">
+          </div>
+        </div>
+
+        <!-- Equipment Category -->
+        <div class="search-field">
+          <label for="searchCategory" data-i18n="search_category_label">Equipment Category</label>
+          <div class="input-wrapper">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <select id="searchCategory" class="form-select">
+              <option value="" data-i18n="search_category_all">All Categories</option>
+              <option value="drones">Agricultural Drones</option>
+              <option value="tractors">Tractors & Implements</option>
+              <option value="harvesters">Combine Harvesters</option>
+              <option value="seeders">Seed Drills & Planters</option>
+              <option value="tillers">Power Tillers</option>
+              <option value="sprayers">Boom & Orchard Sprayers</option>
+              <option value="pumps">Irrigation Pumps</option>
+              <option value="threshers">Threshers & Processors</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Start Date -->
+        <div class="search-field">
+          <label for="searchStartDate" data-i18n="search_start_date">Rental Start</label>
+          <input type="date" id="searchStartDate" class="form-control">
+        </div>
+
+        <!-- End Date -->
+        <div class="search-field">
+          <label for="searchEndDate" data-i18n="search_end_date">Rental End</label>
+          <input type="date" id="searchEndDate" class="form-control">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" style="height: 44px;" id="searchSubmitBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span data-i18n="btn_search">Search Equipment</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TRUST STATS BAR
+       ========================================================================= -->
+  <div class="container">
+    <div class="trust-bar">
+      <div class="trust-item">
+        <span class="trust-num">5,000+</span>
+        <span class="trust-label" data-i18n="stat_machinery">Farm Implements Available</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-num">1,200+</span>
+        <span class="trust-label" data-i18n="stat_providers">Verified Local Providers</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-num">98%</span>
+        <span class="trust-label" data-i18n="stat_operators">Trained Operators On-Demand</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-num">70%</span>
+        <span class="trust-label" data-i18n="stat_savings">Average Cost Savings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       POPULAR EQUIPMENT CATEGORIES
+       ========================================================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="cat_section_tag">Diverse Machinery For Every Crop</span>
+        <h2 class="section-title" data-i18n="cat_section_title">Popular Equipment Categories</h2>
+        <p class="section-subtitle" data-i18n="cat_section_desc">
+          Discover verified equipment tailored for paddy, cotton, maize, sugarcane, chili, and horticulture crops across India.
+        </p>
+      </div>
+
+      <div class="category-grid">
+        <!-- 1. Agricultural Drones -->
+        <a href="/pages/marketplace.html?category=drones" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M7 7l-3.5 -3.5"/><path d="M17 7l3.5 -3.5"/><path d="M7 17l-3.5 3.5"/><path d="M17 17l3.5 3.5"/><line x1="2" y1="3.5" x2="5" y2="3.5"/><line x1="19" y1="3.5" x2="22" y2="3.5"/><line x1="2" y1="20.5" x2="5" y2="20.5"/><line x1="19" y1="20.5" x2="22" y2="20.5"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_drones">Agricultural Drones</h3>
+          <p class="category-count" data-i18n="cat_drones_desc">Precision spraying & health mapping</p>
+        </a>
+
+        <!-- 2. Tractors & Implements -->
+        <a href="/pages/marketplace.html?category=tractors" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_tractors">Tractors & Implements</h3>
+          <p class="category-count" data-i18n="cat_tractors_desc">35HP to 75HP 4WD with rotavator</p>
+        </a>
+
+        <!-- 3. Combine Harvesters -->
+        <a href="/pages/marketplace.html?category=harvesters" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_harvesters">Combine Harvesters</h3>
+          <p class="category-count" data-i18n="cat_harvesters_desc">Multi-crop track and wheel models</p>
+        </a>
+
+        <!-- 4. Seed Drills & Planters -->
+        <a href="/pages/marketplace.html?category=seeders" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M8 8l4-4 4 4"/><path d="M5 15h14"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_seeders">Seed Drills & Planters</h3>
+          <p class="category-count" data-i18n="cat_seeders_desc">Zero tillage & precision pneumatic</p>
+        </a>
+
+        <!-- 5. Power Tillers -->
+        <a href="/pages/marketplace.html?category=tillers" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_tillers">Power Tillers</h3>
+          <p class="category-count" data-i18n="cat_tillers_desc">Compact tillers for wet paddy & horticulture</p>
+        </a>
+
+        <!-- 6. Sprayers -->
+        <a href="/pages/marketplace.html?category=sprayers" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14a4 4 0 0 1 8 0v6H4v-6z"/><path d="M8 4v6"/><path d="M16 6l3-3"/><path d="M19 11l3-1"/><path d="M16 16l3 2"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_sprayers">Boom & Orchard Sprayers</h3>
+          <p class="category-count" data-i18n="cat_sprayers_desc">Tractor-mounted high pressure sprayers</p>
+        </a>
+
+        <!-- 7. Irrigation Pumps -->
+        <a href="/pages/marketplace.html?category=pumps" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_pumps">Irrigation Pumps</h3>
+          <p class="category-count" data-i18n="cat_pumps_desc">High-discharge diesel & solar pumps</p>
+        </a>
+
+        <!-- 8. Threshers & Processors -->
+        <a href="/pages/marketplace.html?category=threshers" class="category-card">
+          <div class="category-icon-wrapper">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <h3 class="category-title" data-i18n="cat_threshers">Threshers & Processors</h3>
+          <p class="category-count" data-i18n="cat_threshers_desc">Multi-crop mobile threshers</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       FEATURED EQUIPMENT LISTINGS
+       ========================================================================= -->
+  <section class="section" style="background-color: var(--color-white); border-top: 1px solid var(--color-grey-light);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Verified Machinery</span>
+        <h2 class="section-title" data-i18n="featured_title">Featured Agricultural Equipment</h2>
+        <p class="section-subtitle" data-i18n="featured_subtitle">
+          Inspected, provider-verified machinery ready for instant booking near you.
+        </p>
+      </div>
+
+      <div class="equipment-grid" id="featuredEquipmentContainer">
+        <!-- Rendered dynamically via app.js -->
+        <div class="skeleton" style="height: 380px; border-radius: var(--radius-xl);"></div>
+        <div class="skeleton" style="height: 380px; border-radius: var(--radius-xl);"></div>
+        <div class="skeleton" style="height: 380px; border-radius: var(--radius-xl);"></div>
+      </div>
+
+      <div style="text-align: center; margin-top: var(--space-10);">
+        <a href="/pages/marketplace.html" class="btn btn-outline btn-lg" style="display:inline-flex; align-items:center; gap:0.5rem;">
+          <span>Explore All 250+ Listings</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       HOW THE PLATFORM WORKS
+       ========================================================================= -->
+  <section class="section workflow-section" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Step-By-Step Process</span>
+        <h2 class="section-title" data-i18n="workflow_title">How FarmEquip Works</h2>
+        <p class="section-subtitle" data-i18n="workflow_subtitle">
+          Transparent, dispute-free rental workflow built specifically for rural communities.
+        </p>
+      </div>
+
+      <div class="workflow-steps">
+        <!-- Step 1 -->
+        <div class="workflow-card">
+          <div class="step-number">1</div>
+          <h4 data-i18n="step1_title">1. Discover & Compare</h4>
+          <p data-i18n="step1_desc">Search equipment near your village. Check real rates per day or per acre and operator options.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="workflow-card">
+          <div class="step-number">2</div>
+          <h4 data-i18n="step2_title">2. Book & Security Deposit</h4>
+          <p data-i18n="step2_desc">Choose dates, specify operator need, and pay a nominal escrow refundable deposit.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="workflow-card">
+          <div class="step-number">3</div>
+          <h4 data-i18n="step3_title">3. Handover & Farm Work</h4>
+          <p data-i18n="step3_desc">Perform joint mobile photo inspection at handover. Equipment condition is recorded in the system.</p>
+        </div>
+        <!-- Step 4 -->
+        <div class="workflow-card">
+          <div class="step-number">4</div>
+          <h4 data-i18n="step4_title">4. Return & Deposit Refund</h4>
+          <p data-i18n="step4_desc">Complete work, return machinery, complete exit checklist, and get instant deposit refund.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       BENEFITS FOR FARMERS & EQUIPMENT OWNERS
+       ========================================================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="benefits-split">
+        <!-- For Farmers -->
+        <div class="benefit-box">
+          <div class="badge badge-forest" style="margin-bottom:var(--space-3);">FOR FARMERS</div>
+          <h3 data-i18n="farmer_benefits_title">Benefits for Farmers</h3>
+          <ul class="benefit-list">
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_farmer_1">Access high-cost drones and 4WD tractors without huge capital debt.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_farmer_2">Certified operators ensure safe, fast chemical spraying and field preparation.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_farmer_3">Pay transparent hourly, daily, or per-acre rates with zero hidden charges.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_farmer_4">Escrow deposit protection: guaranteed refund upon undamaged return.</span>
+            </li>
+          </ul>
+          <a href="/pages/marketplace.html" class="btn btn-primary" data-i18n="btn_find_equipment">Find Equipment Now</a>
+        </div>
+
+        <!-- For Equipment Owners -->
+        <div class="benefit-box for-owners">
+          <div class="badge badge-warning" style="margin-bottom:var(--space-3);">FOR EQUIPMENT OWNERS</div>
+          <h3 data-i18n="owner_benefits_title">Benefits for Equipment Owners</h3>
+          <ul class="benefit-list">
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_owner_1">Monetize idle machinery during off-peak windows and earn steady rental income.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_owner_2">Mandatory farmer KYC and pre-rental digital photo inspection protect your asset.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_owner_3">Automated schedule calendar prevents double-bookings and booking disputes.</span>
+            </li>
+            <li>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="benefit_owner_4">Direct UPI and bank transfers with full deposit enforcement against damage.</span>
+            </li>
+          </ul>
+          <a href="/pages/register.html?role=equipment_owner" class="btn btn-forest" data-i18n="btn_list_equipment">List Your Equipment</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SAFETY & VERIFICATION
+       ========================================================================= -->
+  <section class="section" style="background-color: var(--color-white); border-top: 1px solid var(--color-grey-light);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Security & Trust</span>
+        <h2 class="section-title">Zero Risk. Verified Machinery.</h2>
+        <p class="section-subtitle">How FarmEquip protects both farmers and equipment owners at every step.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-6);">
+        <div class="card" style="padding:var(--space-6); text-align:center;">
+          <div style="width:50px; height:50px; border-radius:50%; background:var(--color-light-green); color:var(--color-forest); display:flex; align-items:center; justify-content:center; margin:0 auto var(--space-4);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h4 style="font-size:var(--text-lg); margin-bottom:var(--space-2);">Escrow Deposit Safety</h4>
+          <p style="font-size:var(--text-sm); color:var(--color-grey);">Security deposits remain protected in escrow and are refunded automatically upon satisfactory condition sign-off.</p>
+        </div>
+
+        <div class="card" style="padding:var(--space-6); text-align:center;">
+          <div style="width:50px; height:50px; border-radius:50%; background:var(--color-light-green); color:var(--color-forest); display:flex; align-items:center; justify-content:center; margin:0 auto var(--space-4);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <h4 style="font-size:var(--text-lg); margin-bottom:var(--space-2);">Digital Handover Photos</h4>
+          <p style="font-size:var(--text-sm); color:var(--color-grey);">Both parties verify machinery condition with live photo inspection before and after the rental period.</p>
+        </div>
+
+        <div class="card" style="padding:var(--space-6); text-align:center;">
+          <div style="width:50px; height:50px; border-radius:50%; background:var(--color-light-green); color:var(--color-forest); display:flex; align-items:center; justify-content:center; margin:0 auto var(--space-4);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+          </div>
+          <h4 style="font-size:var(--text-lg); margin-bottom:var(--space-2);">KYC Verified Providers</h4>
+          <p style="font-size:var(--text-sm); color:var(--color-grey);">Every provider and operator undergoes Aadhaar/PAN and RC certificate verification before publishing listings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       FREQUENTLY ASKED QUESTIONS
+       ========================================================================= -->
+  <section class="section" id="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Got Questions?</span>
+        <h2 class="section-title" data-i18n="faq_title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-accordion" id="faqAccordion">
+        <div class="faq-item active">
+          <button class="faq-question">
+            <span data-i18n="faq_q1">How does the security deposit work?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="faq_a1">When you book, a refundable security deposit is held safely in escrow. At equipment return, after a quick photographic condition check, the deposit is released back to your bank account immediately.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q2">Can I hire a trained operator with the machinery?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="faq_a2">Yes! Many listings offer 'With Operator' option. This is especially recommended for agricultural spraying drones, heavy combine harvesters, and laser levelers.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q3">Who provides diesel or fuel?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="faq_a3">Each listing clearly states the fuel policy (e.g. 'Dry rental' where the farmer provides fuel, or 'Wet rental' where the provider includes fuel in the per-acre rate).</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q4">What if rain delays my farm work?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n="faq_a4">FarmEquip supports flexible rescheduling if both farmer and provider agree due to adverse weather events.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CALL TO ACTION
+       ========================================================================= -->
+  <section class="section" style="background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-primary) 100%); color: white; text-align: center;">
+    <div class="container" style="max-width: 720px;">
+      <h2 style="color: white; font-size: clamp(2rem, 4vw, 2.75rem); margin-bottom: var(--space-4);">Ready to mechanize your farm?</h2>
+      <p style="font-size: var(--text-lg); opacity: 0.9; margin-bottom: var(--space-8);">Join thousands of Indian farmers discovering high efficiency with zero equipment debt.</p>
+      <div style="display:flex; justify-content:center; gap:var(--space-4); flex-wrap:wrap;">
+        <a href="/pages/marketplace.html" class="btn btn-secondary btn-lg">Explore Marketplace</a>
+        <a href="/pages/register.html" class="btn btn-outline-white btn-lg">Create Free Account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="/index.html" class="brand-logo" style="color:white;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="30" height="30">
+            <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+            <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+            <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          </svg>
+          <span>Farm<span style="color:#6be094;">Equip</span></span>
+        </a>
+        <p data-i18n="footer_desc">Empowering Indian farmers through affordable, accessible, and shared agricultural mechanization.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_quick_links">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="/pages/marketplace.html" data-i18n="nav_explore">Explore Equipment</a></li>
+          <li><a href="/pages/how-it-works.html" data-i18n="nav_how_it_works">How It Works</a></li>
+          <li><a href="/pages/assistant.html">AI Farmer Assistant</a></li>
+          <li><a href="/pages/login.html" data-i18n="nav_login">Login</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_categories">Categories</h4>
+        <ul class="footer-links">
+          <li><a href="/pages/marketplace.html?category=drones">Agricultural Drones</a></li>
+          <li><a href="/pages/marketplace.html?category=tractors">Tractors & Implements</a></li>
+          <li><a href="/pages/marketplace.html?category=harvesters">Combine Harvesters</a></li>
+          <li><a href="/pages/marketplace.html?category=sprayers">Boom Sprayers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_safety">Safety & Policies</h4>
+        <ul class="footer-links">
+          <li><a href="#faq-section">Escrow Deposit Policy</a></li>
+          <li><a href="#faq-section">Pre-Rental Inspection</a></li>
+          <li><a href="#faq-section">Dispute Resolution</a></li>
+          <li><a href="/pages/register.html?role=equipment_owner">List Your Equipment</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>© 2026 FarmEquip Technologies India Pvt. Ltd. All rights reserved.</p>
+      <div style="display:flex; gap:var(--space-4);">
+        <span>Built for Indian Agriculture</span>
+        <span>•</span>
+        <a href="/pages/admin-dashboard.html" style="color:#8c9e93;">Admin Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating AI Assistant Button -->
+  <a href="/pages/assistant.html" class="ai-fab" id="floatingAssistantBtn" title="Ask AI Farm Assistant">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.11L3 22l1.11-4.413A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg>
+    <span>AI Farm Assistant</span>
+  </a>
+
+  <!-- JavaScript Modules -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    function handleSearchSubmit(e) {
+      e.preventDefault();
+      const loc = document.getElementById('searchLocation').value.trim();
+      const cat = document.getElementById('searchCategory').value;
+      const start = document.getElementById('searchStartDate').value;
+      const end = document.getElementById('searchEndDate').value;
+      const params = new URLSearchParams();
+      if (loc) params.append('location', loc);
+      if (cat) params.append('category', cat);
+      if (start) params.append('start_date', start);
+      if (end) params.append('end_date', end);
+      window.location.href = `/pages/marketplace.html?${params.toString()}`;
+    }
+  </script>
+</body>
+</html>

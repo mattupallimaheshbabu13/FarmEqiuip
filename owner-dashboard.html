@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment Owner Dashboard | FarmEquip</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          <path d="M14 5l3 3l-3 3"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link">Explore Marketplace</a>
+        <a href="/pages/how-it-works.html" class="nav-link">How It Works</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు</button>
+          </div>
+        </div>
+
+        <button class="btn btn-icon btn-secondary" id="notifBellBtn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+
+        <div id="navAuthActions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Notifications</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Dashboard Shell -->
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-profile">
+        <div class="profile-avatar" style="background-color:var(--color-primary);" id="ownerAvatar">RA</div>
+        <div class="profile-info">
+          <div class="profile-name" id="ownerDisplayName">Ramesh Agri-Services</div>
+          <div class="profile-role">Verified Provider <span class="badge badge-verified" style="font-size:9px;">KYC OK</span></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" onclick="switchOwnerTab('listings', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>My Listings</span>
+        </a>
+        <a class="sidebar-link" onclick="switchOwnerTab('requests', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Booking Requests</span>
+          <span class="badge badge-warning" id="pendingRequestsBadge" style="margin-left:auto;">1</span>
+        </a>
+        <a class="sidebar-link" onclick="switchOwnerTab('handovers', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+          <span>Handover & Returns</span>
+        </a>
+        <a class="sidebar-link" onclick="switchOwnerTab('earnings', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Earnings & Payouts</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width:100%; color:var(--color-danger);" onclick="window.auth.logout()">
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-content">
+
+      <!-- HEADER -->
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Equipment Provider Portal</h1>
+          <p class="dashboard-subtitle">Manage agricultural machinery listings, approve reservations, and inspect returns.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openAddEquipmentModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add New Equipment</span>
+        </button>
+      </div>
+
+      <!-- STATS GRID -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">🚜</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statOwnerListings">3</span>
+            <span class="stat-name">Active Listings</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">⏳</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statOwnerRequests">1</span>
+            <span class="stat-name">Pending Requests</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon blue">🌾</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statOwnerActiveRentals">1</span>
+            <span class="stat-name">Equipment in Field</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">₹</div>
+          <div class="stat-info">
+            <span class="stat-val" id="statOwnerEarnings">₹42,800</span>
+            <span class="stat-name">Total Earnings</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: MY LISTINGS -->
+      <section id="owner-tab-listings">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">My Machinery Listings</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Equipment</th>
+                  <th>Category</th>
+                  <th>Rental Rates</th>
+                  <th>Deposit</th>
+                  <th>Operator</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ownerListingsTableBody">
+                <!-- Dynamically rendered via owner-dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: BOOKING REQUESTS -->
+      <section id="owner-tab-requests" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Incoming Booking Requests</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Farmer</th>
+                  <th>Equipment</th>
+                  <th>Dates / Size</th>
+                  <th>Total Amount</th>
+                  <th>Operator</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ownerRequestsTableBody">
+                <!-- Dynamically rendered via owner-dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: HANDOVER & RETURNS INSPECTIONS -->
+      <section id="owner-tab-handovers" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Handovers & Return Sign-Offs</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Equipment</th>
+                  <th>Farmer</th>
+                  <th>Rental State</th>
+                  <th>Escrow Deposit</th>
+                  <th>Sign-Off Action</th>
+                </tr>
+              </thead>
+              <tbody id="ownerHandoversTableBody">
+                <!-- Dynamically rendered via owner-dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: EARNINGS -->
+      <section id="owner-tab-earnings" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:var(--text-lg); color:var(--color-forest);">Earnings & Bank Settlement History</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Settlement Ref</th>
+                  <th>Booking ID</th>
+                  <th>Machinery Rental Fee</th>
+                  <th>Platform Fee (5%)</th>
+                  <th>Net Payout to Bank</th>
+                  <th>Bank Account / UPI</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>SET-99214</code></td>
+                  <td>#BK-95</td>
+                  <td>₹3,900</td>
+                  <td>₹195</td>
+                  <td><strong>₹3,705</strong></td>
+                  <td>SBI A/c •••• 4210</td>
+                  <td><span class="badge badge-success">Deposited</span></td>
+                </tr>
+                <tr>
+                  <td><code>SET-98442</code></td>
+                  <td>#BK-88</td>
+                  <td>₹7,200</td>
+                  <td>₹360</td>
+                  <td><strong>₹6,840</strong></td>
+                  <td>SBI A/c •••• 4210</td>
+                  <td><span class="badge badge-success">Deposited</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ADD EQUIPMENT MODAL -->
+  <div class="modal-backdrop" id="addEquipmentModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">List New Agricultural Machinery</h3>
+        <button class="modal-close" onclick="closeAddEquipmentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addEquipmentForm" onsubmit="handleAddEquipmentSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addEquipTitle">Listing Title <span class="required">*</span></label>
+              <input type="text" id="addEquipTitle" class="form-control" placeholder="e.g. John Deere 5050D 4WD Tractor" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addEquipCategory">Category <span class="required">*</span></label>
+              <select id="addEquipCategory" class="form-select" required>
+                <option value="drones">Agricultural Drones</option>
+                <option value="tractors" selected>Tractors & Implements</option>
+                <option value="harvesters">Combine Harvesters</option>
+                <option value="seeders">Seed Drills & Planters</option>
+                <option value="tillers">Power Tillers</option>
+                <option value="sprayers">Boom Sprayers</option>
+                <option value="pumps">Irrigation Pumps</option>
+                <option value="threshers">Threshers</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addEquipBrand">Brand Name <span class="required">*</span></label>
+              <input type="text" id="addEquipBrand" class="form-control" placeholder="e.g. John Deere, Mahindra, DJI" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addEquipModel">Model / HP Specifications <span class="required">*</span></label>
+              <input type="text" id="addEquipModel" class="form-control" placeholder="e.g. 5050D (50 HP) with Rotavator" required>
+            </div>
+          </div>
+
+          <!-- Pricing & Billing Unit -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addBillingUnit">Primary Billing Unit <span class="required">*</span></label>
+              <select id="addBillingUnit" class="form-select" required>
+                <option value="day">Per Day (₹/day)</option>
+                <option value="acre">Per Acre (₹/acre)</option>
+                <option value="hour">Per Hour (₹/hour)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addRate">Rental Rate (₹) <span class="required">*</span></label>
+              <input type="number" id="addRate" class="form-control" placeholder="e.g. 2800" min="100" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addDeposit">Refundable Escrow Deposit (₹) <span class="required">*</span></label>
+              <input type="number" id="addDeposit" class="form-control" placeholder="e.g. 3000" min="500" required>
+            </div>
+          </div>
+
+          <!-- Location & Operator -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addEquipLocation">Location (Village, District) <span class="required">*</span></label>
+              <input type="text" id="addEquipLocation" class="form-control" placeholder="e.g. Guntur, Andhra Pradesh" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Operator Provision</label>
+              <div style="display:flex; gap:var(--space-4); margin-top:var(--space-2);">
+                <label style="font-size:var(--text-xs); display:flex; align-items:center; gap:4px; cursor:pointer;">
+                  <input type="checkbox" id="addOperatorIncluded" checked>
+                  <span>Operator can be provided upon request</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suitable Crops & Description -->
+          <div class="form-group">
+            <label class="form-label" for="addSuitableCrops">Suitable Crops & Implements</label>
+            <input type="text" id="addSuitableCrops" class="form-control" placeholder="e.g. Paddy puddling, Cotton plowing, Rotavation">
+          </div>
+
+          <!-- Photo URL or Upload -->
+          <div class="form-group">
+            <label class="form-label" for="addPhotoUrl">Photograph URL</label>
+            <input type="url" id="addPhotoUrl" class="form-control" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; height:46px; margin-top:var(--space-4);" id="saveListingBtn">
+            Publish Equipment Listing
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWNER RETURN SIGN-OFF & DEPOSIT RELEASE MODAL -->
+  <div class="modal-backdrop" id="ownerSignoffModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Inspect Return & Release Deposit</h3>
+        <button class="modal-close" onclick="closeSignoffModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#eaf4e8; padding:var(--space-4); border-radius:var(--radius-lg); margin-bottom:var(--space-4);">
+          <strong style="color:var(--color-forest);" id="signoffEquipTitle">DJI Agras T40 Drone</strong>
+          <p style="font-size:var(--text-xs); color:var(--color-grey);" id="signoffFarmerName">Rented by: Venkat Rao (Warangal)</p>
+        </div>
+
+        <div style="font-size:var(--text-sm); margin-bottom:var(--space-4);">
+          <p>Farmer's Inspection Checklist: <strong>✓ Cleaned • ✓ Undamaged • ✓ Fuel Matched</strong></p>
+          <div style="margin-top:var(--space-2); padding:var(--space-3); background:var(--color-warm-cream); border-radius:var(--radius-md);">
+            <em>"Completed 3 acres of paddy spraying. Machine functioned perfectly with zero anomalies."</em>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Inspection Outcome</label>
+          <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-1);">
+            <label style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3); border:1.5px solid var(--color-primary); border-radius:var(--radius-md); background:#fcfdfc; cursor:pointer;">
+              <input type="radio" name="signoffAction" value="approve_full" checked>
+              <strong>Approve & Release 100% Deposit (₹2,000)</strong>
+              <span class="badge badge-success" style="margin-left:auto;">Recommended</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3); border:1px solid var(--color-grey-light); border-radius:var(--radius-md); cursor:pointer;">
+              <input type="radio" name="signoffAction" value="flag_dispute">
+              <span>Report Damage / Dispute (Platform Mediation)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeSignoffModal()">Close</button>
+        <button class="btn btn-forest" id="confirmReleaseBtn" onclick="confirmDepositRelease()">
+          Sign-Off & Transfer Refund
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/owner-dashboard.js"></script>
+</body>
+</html>

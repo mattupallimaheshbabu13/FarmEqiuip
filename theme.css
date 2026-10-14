@@ -1,0 +1,176 @@
+/**
+ * FarmEquip Design System & Theme Variables
+ * Color Palette:
+ * - Forest Green: #174B35 (Deep, rich agricultural grounding)
+ * - Primary Green: #2F7D4A (Growth, vitality, primary actions)
+ * - Light Green: #EAF4E8 (Fresh organic backgrounds, soft badges)
+ * - Warm Cream: #F8F7F0 (Earthy canvas background)
+ * - White: #FFFFFF (Clean contrast surfaces)
+ * - Dark Charcoal: #242B27 (High readability typography)
+ * - Neutral Grey: #6B756E (Subtle borders, meta tags, labels)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Brand Colors */
+  --color-forest: #174B35;
+  --color-forest-dark: #103827;
+  --color-forest-light: #1f6145;
+  --color-primary: #2F7D4A;
+  --color-primary-hover: #26693e;
+  --color-primary-active: #1d5330;
+  --color-light-green: #EAF4E8;
+  --color-light-green-subtle: #f3f8f1;
+  --color-warm-cream: #F8F7F0;
+  --color-white: #FFFFFF;
+  --color-charcoal: #242B27;
+  --color-grey: #6B756E;
+  --color-grey-light: #E2E8E4;
+  --color-grey-lighter: #F1F4F2;
+
+  /* Accent & Functional Colors */
+  --color-amber: #D97706;
+  --color-amber-light: #FEF3C7;
+  --color-amber-dark: #92400E;
+  --color-emerald: #059669;
+  --color-emerald-light: #D1FAE5;
+  --color-blue: #2563EB;
+  --color-blue-light: #DBEAFE;
+  --color-danger: #DC2626;
+  --color-danger-light: #FEE2E2;
+  --color-purple: #7C3AED;
+  --color-purple-light: #EDE9FE;
+
+  /* Typography */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-telugu: 'Noto Sans Telugu', var(--font-body);
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 3.75rem;    /* 60px */
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border Radii */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(23, 75, 53, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(23, 75, 53, 0.08), 0 2px 4px -2px rgba(23, 75, 53, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(23, 75, 53, 0.1), 0 4px 6px -4px rgba(23, 75, 53, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(23, 75, 53, 0.12), 0 8px 10px -6px rgba(23, 75, 53, 0.06);
+  --shadow-card: 0 2px 8px rgba(23, 75, 53, 0.06), 0 0 1px rgba(23, 75, 53, 0.1);
+  --shadow-card-hover: 0 12px 24px -4px rgba(23, 75, 53, 0.12), 0 4px 8px -2px rgba(23, 75, 53, 0.06);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --container-max: 1280px;
+  --header-height: 76px;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-warm-cream);
+  color: var(--color-charcoal);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Telugu language typography support */
+[lang="te"] body,
+body.lang-te {
+  font-family: var(--font-telugu);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-charcoal);
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Common Container */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}

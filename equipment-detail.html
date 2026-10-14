@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment Details | FarmEquip</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232F7D4A'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <style>
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: var(--space-8);
+      margin: var(--space-8) 0 var(--space-16);
+      align-items: start;
+    }
+    .main-gallery {
+      background: #f1f4f2;
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      height: 420px;
+      margin-bottom: var(--space-4);
+      border: 1px solid var(--color-grey-light);
+    }
+    .main-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .spec-box {
+      background: var(--color-white);
+      border: 1px solid var(--color-grey-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+    .spec-box .label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-grey);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .spec-box .val {
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--color-forest);
+      margin-top: var(--space-1);
+    }
+    .booking-sidebar-card {
+      background: var(--color-white);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--color-grey-light);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-xl);
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-4));
+    }
+    .cost-summary-box {
+      background: var(--color-warm-cream);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin: var(--space-4) 0;
+      border: 1px solid var(--color-grey-light);
+    }
+    .cost-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-2);
+      color: var(--color-charcoal);
+    }
+    .cost-row.total {
+      border-top: 1.5px solid var(--color-grey-light);
+      padding-top: var(--space-3);
+      margin-top: var(--space-2);
+      font-weight: 800;
+      font-size: var(--text-lg);
+      color: var(--color-forest);
+    }
+    @media (max-width: 900px) {
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .booking-sidebar-card {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="32" height="32">
+          <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+          <path d="M5 17h-2v-4m2 -3h9l4 7h-6m-6 0h2"></path>
+          <path d="M14 5l3 3l-3 3"></path>
+        </svg>
+        <span>Farm<span class="accent">Equip</span></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="/index.html" class="nav-link" data-i18n="nav_home">Home</a>
+        <a href="/pages/marketplace.html" class="nav-link active" data-i18n="nav_explore">Explore Equipment</a>
+        <a href="/pages/how-it-works.html" class="nav-link" data-i18n="nav_how_it_works">How It Works</a>
+        <a href="/pages/register.html?role=equipment_owner" class="nav-link" data-i18n="nav_for_owners">For Equipment Owners</a>
+        <a href="/pages/assistant.html" class="nav-link">AI Assistant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="lang-selector">
+          <button class="lang-btn" id="langToggleBtn">
+            <span id="currentLangLabel">English</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button class="lang-option active" data-lang="en" onclick="window.i18n.setLanguage('en')">English</button>
+            <button class="lang-option" data-lang="te" onclick="window.i18n.setLanguage('te')">తెలుగు (Telugu)</button>
+          </div>
+        </div>
+
+        <button class="btn btn-icon btn-secondary" id="notifBellBtn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+
+        <div id="navAuthActions">
+          <a href="/pages/login.html" class="btn btn-outline btn-sm">Login</a>
+          <a href="/pages/register.html" class="btn btn-forest btn-sm">Register</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Drawer & Backdrop -->
+  <div class="notif-drawer-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-drawer" id="notifDrawer">
+    <div class="notif-header">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--color-forest);">Notifications</h3>
+      <button class="modal-close" id="closeNotifDrawer">✕</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Breadcrumbs -->
+  <div class="container" style="padding-top: var(--space-4);">
+    <div style="font-size: var(--text-xs); color: var(--color-grey); display:flex; align-items:center; gap:0.5rem;">
+      <a href="/index.html" style="color:var(--color-grey);">Home</a>
+      <span>/</span>
+      <a href="/pages/marketplace.html" style="color:var(--color-grey);">Marketplace</a>
+      <span>/</span>
+      <span id="breadcrumbTitle" style="color:var(--color-forest); font-weight:600;">Equipment Details</span>
+    </div>
+  </div>
+
+  <!-- Detail Page Main Container -->
+  <div class="container">
+    <div class="detail-layout">
+
+      <!-- LEFT COLUMN: PHOTOS, SPECS, POLICIES, REVIEWS -->
+      <div>
+        <div class="main-gallery">
+          <img id="detailMainImage" src="https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1000&q=80" alt="Equipment photograph">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:var(--space-4); flex-wrap:wrap; gap:var(--space-2);">
+          <div>
+            <span class="badge badge-forest" id="detailCategory">Agricultural Drones</span>
+            <span class="badge badge-verified" id="detailVerified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> KYC Verified Provider</span>
+            <span class="badge badge-demo">Sample Listing</span>
+            <h1 id="detailTitle" style="font-size:2.25rem; color:var(--color-forest); margin-top:var(--space-2);">DJI Agras T40 Agricultural Drone</h1>
+            <p id="detailLocation" style="color:var(--color-grey); font-size:var(--text-sm); margin-top:var(--space-1);">
+              📍 Warangal, Telangana • 4.2 km from your search location
+            </p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:2rem; font-weight:800; color:var(--color-forest);" id="detailRateDisplay">₹350</div>
+            <div style="font-size:var(--text-xs); color:var(--color-grey);" id="detailBillingUnit">per acre (excl. fuel)</div>
+          </div>
+        </div>
+
+        <!-- Specifications Grid -->
+        <h3 style="font-size:var(--text-lg); color:var(--color-forest); margin-top:var(--space-6);">Technical Specifications</h3>
+        <div class="spec-grid" id="specGrid">
+          <div class="spec-box">
+            <div class="label">Brand & Model</div>
+            <div class="val" id="specModel">DJI Agras T40</div>
+          </div>
+          <div class="spec-box">
+            <div class="label">Payload / Capacity</div>
+            <div class="val" id="specCapacity">50 kg / 40 Litres</div>
+          </div>
+          <div class="spec-box">
+            <div class="label">Working Speed</div>
+            <div class="val" id="specSpeed">10-15 acres / hour</div>
+          </div>
+          <div class="spec-box">
+            <div class="label">Min Duration</div>
+            <div class="val" id="specMinDuration">2 Hours / 5 Acres</div>
+          </div>
+        </div>
+
+        <!-- Suitable Crops & Agricultural Tasks -->
+        <div class="card" style="margin-bottom:var(--space-6); padding:var(--space-6);">
+          <h4 style="font-size:var(--text-base); color:var(--color-forest); margin-bottom:var(--space-2);">Suitable Crops & Tasks</h4>
+          <p id="detailCrops" style="color:var(--color-charcoal); font-size:var(--text-sm); margin-bottom:var(--space-4);">
+            Highly optimized for Paddy (liquid fertilizer spraying & pest control), Cotton, Chili, Sugarcane, and Maize canopy coverage.
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:var(--space-2);" id="cropsTags">
+            <span class="equip-spec-pill">Paddy</span>
+            <span class="equip-spec-pill">Cotton</span>
+            <span class="equip-spec-pill">Chili</span>
+            <span class="equip-spec-pill">Canopy Spraying</span>
+          </div>
+        </div>
+
+        <!-- Rental Policies & Handover Conditions -->
+        <div class="card" style="margin-bottom:var(--space-6); padding:var(--space-6);">
+          <h4 style="font-size:var(--text-base); color:var(--color-forest); margin-bottom:var(--space-4);">Rental Terms & Policies</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); font-size:var(--text-sm);">
+            <div>
+              <strong style="color:var(--color-forest);">⛽ Fuel & Maintenance:</strong>
+              <p style="color:var(--color-grey); margin-top:2px;" id="detailFuelPolicy">Provider supplies drone batteries and generator charger. Farmer provides generator petrol if farm work exceeds 4 battery cycles.</p>
+            </div>
+            <div>
+              <strong style="color:var(--color-forest);">👨‍🌾 Operator Safety:</strong>
+              <p style="color:var(--color-grey); margin-top:2px;" id="detailOperatorPolicy">Mandatory certified DGCA drone pilot included in rental rate for maximum safety and precision.</p>
+            </div>
+            <div>
+              <strong style="color:var(--color-forest);">🛡️ Refundable Deposit:</strong>
+              <p style="color:var(--color-grey); margin-top:2px;">₹2,000 security deposit held safely in escrow. Returned automatically upon return inspection sign-off.</p>
+            </div>
+            <div>
+              <strong style="color:var(--color-forest);">📸 Inspection Checklist:</strong>
+              <p style="color:var(--color-grey); margin-top:2px;">Digital photos of rotors, nozzles, and spray tank taken at handover and recorded in platform.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Provider Profile Card -->
+        <div class="card" style="margin-bottom:var(--space-6); padding:var(--space-6);">
+          <h4 style="font-size:var(--text-base); color:var(--color-forest); margin-bottom:var(--space-4);">Equipment Provider</h4>
+          <div style="display:flex; align-items:center; gap:var(--space-4);">
+            <div style="width:60px; height:60px; border-radius:50%; background:var(--color-forest); color:white; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700;">
+              RA
+            </div>
+            <div>
+              <h5 style="font-size:var(--text-lg); color:var(--color-forest);" id="providerName">Ramesh Agri-Services</h5>
+              <p style="font-size:var(--text-xs); color:var(--color-grey);">Member since 2024 • Verified KYC & Machinery Registration</p>
+              <div style="display:flex; gap:0.5rem; margin-top:4px;">
+                <span class="badge badge-success">⭐ 4.9 Rating (48 Rentals)</span>
+                <span class="badge badge-info">Fast Handover Confirmed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Reviews -->
+        <div class="card" style="padding:var(--space-6);">
+          <h4 style="font-size:var(--text-base); color:var(--color-forest); margin-bottom:var(--space-4);">Farmer Reviews (4)</h4>
+          <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+            <div style="border-bottom:1px solid var(--color-grey-lighter); padding-bottom:var(--space-3);">
+              <div style="display:flex; justify-content:space-between;">
+                <strong>K. Venkat Rao (5 Acres Paddy)</strong>
+                <span style="color:var(--color-amber);">★★★★★</span>
+              </div>
+              <p style="font-size:var(--text-sm); color:var(--color-grey); margin-top:4px;">"The drone operator sprayed my 5 acres of paddy in under an hour. Saved a huge amount of chemical and water compared to manual spraying."</p>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between;">
+                <strong>M. Satyanarayana (Cotton)</strong>
+                <span style="color:var(--color-amber);">★★★★★</span>
+              </div>
+              <p style="font-size:var(--text-sm); color:var(--color-grey); margin-top:4px;">"Machine was in excellent condition. Refund of deposit happened immediately after return inspection."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: INTERACTIVE COST CALCULATOR & BOOKING CARD -->
+      <aside class="booking-sidebar-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4);">
+          <span style="font-size:var(--text-sm); font-weight:700; color:var(--color-forest);">Rental Reservation</span>
+          <span class="badge badge-success" id="availabilityStatusBadge">Available</span>
+        </div>
+
+        <form id="bookingCalculatorForm" onsubmit="handleInitiateBooking(event)">
+          <!-- Start Date -->
+          <div class="form-group">
+            <label class="form-label" for="bookStartDate">Rental Start Date <span class="required">*</span></label>
+            <input type="date" id="bookStartDate" class="form-control" required onchange="calculateRentalCost()">
+          </div>
+
+          <!-- End Date -->
+          <div class="form-group">
+            <label class="form-label" for="bookEndDate">Rental End Date <span class="required">*</span></label>
+            <input type="date" id="bookEndDate" class="form-control" required onchange="calculateRentalCost()">
+          </div>
+
+          <!-- Quantity / Acreage -->
+          <div class="form-group" id="acreQuantityGroup">
+            <label class="form-label" for="workQuantity">Work Size / Acres</label>
+            <input type="number" id="workQuantity" class="form-control" value="3" min="1" max="100" onchange="calculateRentalCost()">
+            <span class="form-help">Enter estimated acres or days of operation</span>
+          </div>
+
+          <!-- Operator Option -->
+          <div class="form-group">
+            <label class="form-label">Operator Selection</label>
+            <div style="display:flex; gap:var(--space-4); margin-top:var(--space-1);">
+              <label style="font-size:var(--text-xs); display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="operatorOpt" value="with_operator" checked onchange="calculateRentalCost()">
+                <span>With Operator (+₹500/day)</span>
+              </label>
+              <label style="font-size:var(--text-xs); display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="operatorOpt" value="without_operator" onchange="calculateRentalCost()">
+                <span>Self Operated</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Delivery Mode -->
+          <div class="form-group">
+            <label class="form-label">Delivery to Farm or Pickup</label>
+            <div style="display:flex; gap:var(--space-4); margin-top:var(--space-1);">
+              <label style="font-size:var(--text-xs); display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="deliveryOpt" value="delivery" checked onchange="calculateRentalCost()">
+                <span>Deliver to Farm (+₹350)</span>
+              </label>
+              <label style="font-size:var(--text-xs); display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="radio" name="deliveryOpt" value="pickup" onchange="calculateRentalCost()">
+                <span>Self Pickup (Free)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Cost Breakdown Summary -->
+          <div class="cost-summary-box">
+            <div style="font-size:var(--text-xs); font-weight:700; color:var(--color-forest); margin-bottom:var(--space-2); text-transform:uppercase;">
+              Estimated Cost Breakdown
+            </div>
+            <div class="cost-row">
+              <span id="breakdownRentalLabel">Base Machinery Rental:</span>
+              <span id="breakdownRentalCost">₹1,050</span>
+            </div>
+            <div class="cost-row">
+              <span>Operator Charges:</span>
+              <span id="breakdownOperatorCost">₹500</span>
+            </div>
+            <div class="cost-row">
+              <span>Delivery & Logistics:</span>
+              <span id="breakdownDeliveryCost">₹350</span>
+            </div>
+            <div class="cost-row">
+              <span>Refundable Security Deposit:</span>
+              <span id="breakdownDepositCost" style="color:var(--color-primary); font-weight:600;">₹2,000</span>
+            </div>
+            <div class="cost-row total">
+              <span>Total Estimated:</span>
+              <span id="breakdownTotalCost">₹3,900</span>
+            </div>
+            <p style="font-size:0.7rem; color:var(--color-grey); margin-top:var(--space-2);">
+              *Security deposit of ₹2,000 is 100% refundable upon return sign-off.
+            </p>
+          </div>
+
+          <!-- Confirm Booking Button -->
+          <button type="submit" class="btn btn-primary" style="width:100%; height:46px;" id="bookRequestBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Request Booking Reservation</span>
+          </button>
+        </form>
+
+        <div style="margin-top:var(--space-4); text-align:center;">
+          <span style="font-size:var(--text-xs); color:var(--color-grey); display:flex; align-items:center; justify-content:center; gap:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Double-booking prevention active. Verified instantly.
+          </span>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Booking Confirmation / Payment Modal -->
+  <div class="modal-backdrop" id="bookingConfirmModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Equipment Booking</h3>
+        <button class="modal-close" onclick="closeBookingModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#eaf4e8; padding:var(--space-4); border-radius:var(--radius-lg); margin-bottom:var(--space-4);">
+          <h4 style="color:var(--color-forest); font-size:var(--text-base);" id="modalEquipName">DJI Agras T40</h4>
+          <p style="font-size:var(--text-xs); color:var(--color-grey);" id="modalBookingDates">Dates: 15 Oct 2026 to 16 Oct 2026</p>
+        </div>
+
+        <div style="margin-bottom:var(--space-4); font-size:var(--text-sm);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>Machinery Rental:</span>
+            <strong id="modalRentalAmt">₹1,050</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>Operator & Delivery:</span>
+            <strong id="modalServiceAmt">₹850</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>Refundable Deposit (Escrow):</span>
+            <strong id="modalDepositAmt" style="color:var(--color-primary);">₹2,000</strong>
+          </div>
+          <hr style="margin:var(--space-2) 0; border:none; border-top:1px solid var(--color-grey-light);">
+          <div style="display:flex; justify-content:space-between; font-size:var(--text-lg); font-weight:800; color:var(--color-forest);">
+            <span>Payable Amount:</span>
+            <span id="modalTotalPayable">₹3,900</span>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection (Mock Gateway / UPI) -->
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <div style="display:flex; flex-direction:column; gap:var(--space-2); margin-top:var(--space-1);">
+            <label style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3); border:1.5px solid var(--color-primary); border-radius:var(--radius-md); background:#fcfdfc; cursor:pointer;">
+              <input type="radio" name="payMethod" value="upi" checked>
+              <strong>UPI / QR Code (PhonePe, Google Pay, Paytm)</strong>
+              <span class="badge badge-success" style="margin-left:auto;">Instant</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:var(--space-2); padding:var(--space-3); border:1px solid var(--color-grey-light); border-radius:var(--radius-md); cursor:pointer;">
+              <input type="radio" name="payMethod" value="netbanking">
+              <span>Net Banking / Debit Card</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Terms agreement -->
+        <div style="margin-top:var(--space-4);">
+          <label style="display:flex; align-items:flex-start; gap:var(--space-2); font-size:var(--text-xs); color:var(--color-grey); cursor:pointer;">
+            <input type="checkbox" id="termsCheck" checked required style="margin-top:2px;">
+            <span>I agree to participate in the joint photo condition inspection at handover and return according to the FarmEquip Fair Usage policy.</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+        <button class="btn btn-primary" id="confirmPaymentBtn" onclick="submitBookingReservation()">
+          Pay & Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/booking.js"></script>
+</body>
+</html>
